@@ -107,6 +107,7 @@ yarn build
             events: IEvents — объект для управления событиями
     set counter(value: number): void — установка значения счётчика
     set catalog(items: HTMLElement[]): void — установка элементов каталога
+    set locked(value: boolean): void — блокировка/разблокировка страницы.
 
 2.	Компонент Card отвечает за отображение карточек товаров. Его функции: отображение информации о товаре.
 Поля:
@@ -132,7 +133,7 @@ yarn build
     list: HTMLElement — список товаров в корзине
     total: HTMLElement — общая стоимость товаров
     button: HTMLElement — кнопка оформления заказа
-    deleteButton: HTMLElement — кнопка удаления товара
+    <!-- deleteButton: HTMLElement — кнопка удаления товара -->
 Методы:
     constructor(container: HTMLElement, events: EventEmitter) — инициализация компонента
         Параметры:
@@ -155,7 +156,7 @@ yarn build
     set phone(value: string): void — установка телефона
     set email(value: string): void — установка электронной почты
     set address(value: string): void — установка адреса
-    set paymentMethod(value: 'онлайн' | 'при получении'): void — установка способа оплаты
+    set paymentMethod(value: 'online' | 'upon_receipt'): void — установка способа оплаты
 
 5.	Компонент Form отвечает за работу с формами. Его функции: валидация и обработка ошибок.
 Поля:
@@ -214,6 +215,7 @@ yarn build
     getTotal(): number — получение общей стоимости товаров в корзине
     setCatalog(items: IProduct[]): void — установка каталога товаров
     setPreview(item: ProductItem): void — установка товара для предпросмотра
+    getAvailableProducts(): ProductItem[] — получение доступных товаров
     setOrderField(field: keyof IOrderForm, value: string): void — установка поля заказа
     validateOrder(): boolean — валидация заказа
 
@@ -233,6 +235,7 @@ yarn build
     Наследуются от Model
 
 ## Типы данных
+ProductCategory: Тип для категорий продуктов (другое, софт-скил, дополнительное, кнопка, хард-скил)
 IProduct: Интерфейс для товара
 IOrderForm: Интерфейс для формы заказа
 IOrder: Интерфейс для заказа

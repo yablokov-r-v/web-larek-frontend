@@ -1,7 +1,8 @@
 @use "variables" as *;
 @use "mixins";
 
-.gallery {
+// .gallery {
+.catalog__items {
   @include mixins.container;
   @include mixins.grid(600px, 24px);
 

@@ -1,7 +1,5 @@
-// Тип для категорий продуктов
-export type ProductCategory = 'другое' | 'софт-скил' | 'дополнительное' | 'кнопка' | 'хард-скил';
+export type ProductCategory = 'Другое' | 'Софт-скил' | 'Дополнительное' | 'Кнопка' | 'Хард-скил';
 
-// Интерфейс для описания продукта
 export interface IProduct {
     id: string;
     title: string;
@@ -11,29 +9,25 @@ export interface IProduct {
     price: number;
 }
 
-// Интерфейс для формы заказа
 export interface IOrderForm {
+    address: string;
+    payment: string; 
     email: string;
     phone: string;
-    address: string;
-    paymentMethod: 'онлайн' | 'при получении'; 
+    total: string;
 }
 
-// Интерфейс для заказа, расширяет интерфейс IOrderForm
 export interface IOrder extends IOrderForm {
     items: string[];
 }
 
-// Интерфейс для результата заказа
 export interface IOrderResult {
     id: string;
     total: number;
 }
 
-// Тип для ошибок формы
-export type FormErrors = Partial<Record<keyof IOrder, string>>;
+export type FormErrors = Partial<Record<keyof IOrderForm, string>>;
 
-// Интерфейс для состояния приложения
 export interface IAppState {
     catalog: IProduct[];
     basket: string[];
