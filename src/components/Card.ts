@@ -25,6 +25,7 @@ export class Card<T> extends Component<ICard<T>> {
 	constructor(
 		protected blockName: string,
 		container: HTMLElement,
+		category: string,
 		actions?: ICardActions
 	) {
 		super(container);
@@ -41,6 +42,8 @@ export class Card<T> extends Component<ICard<T>> {
 			);
 			this._button = container.querySelector(`.${blockName}__button`);
 			this._description = container.querySelector(`.${blockName}__text`);
+			this.setCategoryClass(category);
+
 		} catch {}
 
 		this._price = ensureElement<HTMLElement>(`.${blockName}__price`, container);
@@ -96,10 +99,30 @@ export class Card<T> extends Component<ICard<T>> {
 		this.setText(this._price, value);
 		this.setDisabled(this._button, value === 'Бесценно');
 	}
+
+	private setCategoryClass(category: string) {
+		const categoryClassMap: { [key: string]: string } = {
+			'другое': 'card__category_other',
+			'софт-скил': 'card__category_soft',
+			'дополнительное': 'card__category_additional',
+			'кнопка': 'card__category_button',
+			'хард-скил': 'card__category_hard',
+		};
+	
+		const categoryClass = categoryClassMap[category.toLowerCase()];
+		
+		Object.values(categoryClassMap).forEach(cls => {
+			if (this._category) {
+				this._category.classList.remove(cls);
+			}
+		});
+
+		this._category.classList.add(categoryClass);
+	}
 }
 
-export class ProductItem extends Card<IProduct> {
-	constructor(container: HTMLElement, actions?: ICardActions) {
-		super('card', container, actions);
+export class ProductCard extends Card<IProduct> {
+	constructor(container: HTMLElement, category: string, actions?: ICardActions) {
+		super('card', container, category, actions);
 	}
 }

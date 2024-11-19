@@ -4,7 +4,7 @@ import { API_URL, CDN_URL } from './utils/constants';
 import { EventEmitter } from './components/base/events';
 import { AppState, CatalogChangeEvent, ProductItem } from './components/AppData';
 import { Page } from './components/Page';
-import { ProductItem as ProductCard } from './components/Card';
+import { ProductCard } from './components/Card';
 import { cloneTemplate, ensureElement } from './utils/utils';
 import { Modal } from './components/common/Modal';
 import { Basket } from './components/common/Basket';
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Изменились элементы каталога
 	events.on<CatalogChangeEvent>('items:changed', () => {
 		page.catalog = appData.catalog.map((item) => {
-			const card = new ProductCard(cloneTemplate(cardCatalogTemplate), {
+			const card = new ProductCard(cloneTemplate(cardCatalogTemplate), item.category, {
 				onClick: () => events.emit('card:select', item),
 			});
 			return card.render({
@@ -108,13 +108,13 @@ document.addEventListener('DOMContentLoaded', () => {
 				const success = new Success(cloneTemplate(successTemplate), {
 					onClick: () => {
 						modal.close();
-						appData.clearBasket();
-						updateBasket();
 					},
 				});
 				modal.render({
 					content: success.render({ total: result.total }),
 				});
+				appData.clearBasket();
+				updateBasket();
 			})
 			.catch((err: any) => {
 				console.error(err);
@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	events.on('catalog:changed', () => {
 		basket.items = appData.basket.map((id) => {
 			const item = appData.catalog.find((product) => product.id === id);
-			const card = new ProductCard(cloneTemplate(cardCatalogTemplate), {
+			const card = new ProductCard(cloneTemplate(cardCatalogTemplate), item.category, {
 				onClick: () => events.emit('preview:changed', item),
 			});
 			return card.render({
@@ -193,21 +193,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// Функция, которая отвечает за обновление списка товаров в корзине и пересчет общей стоимости
 	function updateBasket() {
-		basket.items = appData.order.items.map((id) => {
+		basket.items = appData.order.items.map((id, index) => {
 			const item = appData.catalog.find((product) => product.id === id);
-			return new ProductCard(cloneTemplate(cardBasketTemplate), {
+			const card = new ProductCard(cloneTemplate(cardBasketTemplate), item.category, {
 				onClick: () => {
 					appData.toggleOrderedProduct(item.id, false);
 					updateBasket();
 					page.counter = appData.order.items ? appData.order.items.length : 0;
 				},
-			}).render({
+			});
+			
+			const renderedCard = card.render({
 				title: item.title,
 				price:
 					item.price !== null
 						? ` ${item.price.toString()} синапсов`
 						: '0 синапсов',
 			});
+
+			const indexElement = renderedCard.querySelector('.basket__item-index');
+			indexElement.textContent = (index + 1).toString();
+			return renderedCard;
+
 		});
 		basket.total = appData.getTotal();
 		page.counter = appData.order.items ? appData.order.items.length : 0;
@@ -223,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Изменен открытый выбранный товар
 	events.on('preview:changed', (item: ProductItem) => {
 		const showItem = (item: ProductItem) => {
-			const card = new ProductCard(cloneTemplate(cardPreviewTemplate), {
+			const card = new ProductCard(cloneTemplate(cardPreviewTemplate), item.category, {
 				onClick: () => {
 					events.emit('card:addToBasket', item);
 				},

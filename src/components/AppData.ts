@@ -58,8 +58,8 @@ export class AppState extends Model<IAppState> {
 		);
 	}
 
-	setCatalog(items: IProduct[]) {
-		this.catalog = items.map((item) => new ProductItem(item, this.events));
+	setCatalog(items: ProductItem[]) {
+		this.catalog = items;
 		this.emitChanges('items:changed', { catalog: this.catalog });
 	}
 
